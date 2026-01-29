@@ -1,0 +1,37 @@
+Docker (Multi-Stage Build):
+
+This project uses a multi-stage Dockerfile to keep the final image small and secure by separating the build environment from the runtime environment.
+
+Build the Docker Image:-
+
+Build the Docker image from the Dockerfile:
+
+docker build -t webimage .
+
+
+Note: Replace webimage with your preferred image name if needed.
+
+Run the Container:-
+
+Run a container from the built image and expose port 5000:
+
+docker run -p 5000:5000 --name webapp webimage
+
+
+webimage → image name
+webapp → container name
+
+Application will be available at:
+http://localhost:5000
+
+View Container Logs:-
+
+To tail logs from the running container:
+
+docker logs --tail 200 -f webapp
+
+Final Notes:
+
+Ensure the Flask app runs on 0.0.0.0 and port 5000
+
+Port mapping used: 5000:5000 (host → container)
