@@ -41,8 +41,9 @@ case "$choice" in
     ;;
 
   4)
-    echo "Deleting Docker container (any state)..."
-    docker rm -f $CONTAINER_NAME
+    echo "Deleting all containers, regardless of state..."
+    # docker rm -f $CONTAINER_NAME
+    docker rm -f $(docker ps -aq)
     ;;
 
   5)
