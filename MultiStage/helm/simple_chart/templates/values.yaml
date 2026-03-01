@@ -1,0 +1,9 @@
+replicas: 2
+image: durai5050/flask_images:1.0
+port: 5000
+
+thangaaService:
+   type: NodePort
+   port: 80
+   targetPort: 5000
+   nodePort: 30080
