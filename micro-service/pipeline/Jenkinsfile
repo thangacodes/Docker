@@ -34,8 +34,8 @@ pipeline {
             }
             steps {
                 sh '''
-                kubectl apply -f svc.yaml
-                kubectl apply -f v1.yaml
+                kubectl apply -f Docker/micro-service/manifest-files/svc.yaml
+                kubectl apply -f Docker/micro-service/manifest-files/v1.yaml
                 kubectl rollout status deployment/$DEPLOYMENT_NAME -n $NAMESPACE
                 '''
             }
@@ -46,7 +46,7 @@ pipeline {
             }
             steps {
                 sh '''
-                kubectl apply -f v2.yaml
+                kubectl apply -f Docker/micro-service/manifest-files/v2.yaml
                 kubectl rollout status deployment/$DEPLOYMENT_NAME -n $NAMESPACE
                 '''
             }
