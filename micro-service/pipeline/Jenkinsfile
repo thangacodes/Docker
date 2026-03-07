@@ -1,34 +1,33 @@
 pipeline {
     agent any
-
     environment {
         DEPLOYMENT_NAME = "msapp-deployment"
-        NAMESPACE = "default"
+        NAMESPACE = "dev"
         REGION    = "ap-south-1"
     }
-
     parameters {
         choice(
             name: 'ACTION',
             choices: ['DEPLOY_V1', 'DEPLOY_V2', 'ROLLBACK'],
             description: 'Choose deployment action'
         )
-
         string(
             name: 'ROLLBACK_REVISION',
             defaultValue: '1',
             description: 'Revision number for rollback (only used if ACTION=ROLLBACK)'
         )
     }
-
     stages {
-
+        stage('Cleanup-WS') {
+            steps {
+                cleanupWs()
+             }
+        }
         stage('Checkout') {
             steps {
-                git 'https://github.com/your-repo/k8s-manifests.git'
+                git 'https://github.com/thangacodes/Docker.git'
             }
         }
-
         stage('Deploy V1') {
             when {
                 expression { params.ACTION == 'DEPLOY_V1' }
@@ -36,24 +35,22 @@ pipeline {
             steps {
                 sh '''
                 kubectl apply -f svc.yaml
-                kubectl apply -f v1-deployment.yaml
+                kubectl apply -f v1.yaml
                 kubectl rollout status deployment/$DEPLOYMENT_NAME -n $NAMESPACE
                 '''
             }
         }
-
         stage('Deploy V2') {
             when {
                 expression { params.ACTION == 'DEPLOY_V2' }
             }
             steps {
                 sh '''
-                kubectl apply -f v2-deployment.yaml
+                kubectl apply -f v2.yaml
                 kubectl rollout status deployment/$DEPLOYMENT_NAME -n $NAMESPACE
                 '''
             }
         }
-
         stage('Check Rollout History') {
             when {
                 expression { params.ACTION == 'ROLLBACK' }
@@ -64,7 +61,6 @@ pipeline {
                 '''
             }
         }
-
         stage('Rollback Deployment') {
             when {
                 expression { params.ACTION == 'ROLLBACK' }
@@ -77,7 +73,6 @@ pipeline {
                 """
             }
         }
-
         stage('Verify Rollout') {
             steps {
                 sh '''
